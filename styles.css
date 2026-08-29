@@ -62,6 +62,19 @@ h1 {
   color: var(--muted);
 }
 
+.section-heading h2 {
+  margin: 0;
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  letter-spacing: -0.04em;
+}
+
+.section-copy {
+  max-width: 42rem;
+  margin: 0.8rem 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 .card {
   padding: 1.75rem;
   border: 1px solid rgba(156, 255, 176, 0.1);
@@ -350,6 +363,72 @@ button:focus-visible {
   margin-top: 1rem;
 }
 
+.checker-card {
+  margin-top: 1.5rem;
+}
+
+.checker-form {
+  margin-top: 1.4rem;
+}
+
+.checker-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.checker-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.checker-results {
+  margin-top: 1.6rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--line);
+}
+
+.checker-result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.checker-summary {
+  margin-top: 1rem;
+  padding: 1.15rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--panel-soft);
+}
+
+.checker-summary-label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.checker-summary h3 {
+  margin: 0.45rem 0 0;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.checker-verdict,
+.checker-context {
+  margin: 0.65rem 0 0;
+  line-height: 1.6;
+}
+
+.checker-verdict {
+  font-weight: 700;
+}
+
 .insight {
   margin: 1rem 0 0;
   color: var(--muted);
@@ -369,6 +448,16 @@ button:focus-visible {
 
   .input-row {
     grid-template-columns: 1fr;
+  }
+
+  .checker-grid,
+  .checker-result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .checker-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .currency {

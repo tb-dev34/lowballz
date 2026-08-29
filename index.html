@@ -19,8 +19,7 @@
         <h1>LowBall Offer Calculator</h1>
         <p class="intro">
           Enter the estimated value of the car and get a quick range of offer
-          prices, from reasonable to absurd. Built as a plain static site, so
-          it will deploy cleanly to GitHub Pages.
+          prices, from reasonable to absurd.
         </p>
       </section>
 
@@ -77,6 +76,86 @@
           </div>
           <div id="offer-list" class="offer-list"></div>
           <p class="insight" id="insight"></p>
+        </section>
+      </section>
+
+      <section class="card checker-card">
+        <div class="section-heading">
+          <p class="eyebrow">Reality check</p>
+          <h2>Is your offer a lowball?</h2>
+          <p class="section-copy">
+            Enter the car value and your planned offer. The site will match it
+            to the same offer tiers used above.
+          </p>
+        </div>
+
+        <form id="checker-form" class="offer-form checker-form">
+          <div class="checker-grid">
+            <div>
+              <label for="checker-car-value">Car value</label>
+              <div class="input-row">
+                <span class="currency">$</span>
+                <input
+                  id="checker-car-value"
+                  name="checker-car-value"
+                  type="number"
+                  min="0"
+                  step="100"
+                  inputmode="decimal"
+                  placeholder="30000"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="checker-offer-value">Your offer</label>
+              <div class="input-row">
+                <span class="currency">$</span>
+                <input
+                  id="checker-offer-value"
+                  name="checker-offer-value"
+                  type="number"
+                  min="0"
+                  step="100"
+                  inputmode="decimal"
+                  placeholder="24000"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="checker-actions">
+            <label class="checkbox-row" for="checker-salvage-title">
+              <input
+                id="checker-salvage-title"
+                name="checker-salvage-title"
+                type="checkbox"
+              />
+              <span>Salvage/Rebuilt title</span>
+            </label>
+            <button type="submit">Check offer</button>
+          </div>
+        </form>
+
+        <section id="checker-results" class="checker-results" hidden aria-live="polite">
+          <div class="checker-result-grid">
+            <div class="results-value-block">
+              <p class="results-value-label">Effective vehicle value</p>
+              <h2 id="checker-effective-value">$0</h2>
+            </div>
+            <div class="results-value-block">
+              <p class="results-value-label">Your offer</p>
+              <h2 id="checker-offer-display">$0</h2>
+            </div>
+          </div>
+          <div class="checker-summary">
+            <p class="checker-summary-label" id="checker-summary-label">Offer tier</p>
+            <h3 id="checker-tier">Good Offer</h3>
+            <p id="checker-verdict" class="checker-verdict"></p>
+            <p id="checker-context" class="checker-context"></p>
+          </div>
         </section>
       </section>
     </main>
