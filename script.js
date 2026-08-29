@@ -7,32 +7,6 @@ const OFFERS = [
   { label: "Late Night Facebook Offer", discount: 60 },
 ];
 
-const form = document.querySelector("#offer-form");
-const valueInput = document.querySelector("#car-value");
-const salvageTitleInput = document.querySelector("#salvage-title");
-const checkerForm = document.querySelector("#checker-form");
-const checkerCarValueInput = document.querySelector("#checker-car-value");
-const checkerOfferValueInput = document.querySelector("#checker-offer-value");
-const checkerSalvageTitleInput = document.querySelector("#checker-salvage-title");
-const results = document.querySelector("#results");
-const resultsValue = document.querySelector("#results-value");
-const salvageValueBlock = document.querySelector("#salvage-value-block");
-const salvageResultsValue = document.querySelector("#salvage-results-value");
-const offerList = document.querySelector("#offer-list");
-const insight = document.querySelector("#insight");
-const checkerResults = document.querySelector("#checker-results");
-const checkerEffectiveValue = document.querySelector("#checker-effective-value");
-const checkerOfferDisplay = document.querySelector("#checker-offer-display");
-const checkerSummaryLabel = document.querySelector("#checker-summary-label");
-const checkerTier = document.querySelector("#checker-tier");
-const checkerVerdict = document.querySelector("#checker-verdict");
-const checkerContext = document.querySelector("#checker-context");
-const messageModal = document.querySelector("#message-modal");
-const messageOfferLabel = document.querySelector("#message-offer-label");
-const messageText = document.querySelector("#message-text");
-const copyMessageButton = document.querySelector("#copy-message");
-const closeModalButton = document.querySelector("#close-modal");
-
 const SALVAGE_DISCOUNT = 0.4;
 
 const getEffectiveValue = (carValue, hasSalvageTitle) =>
@@ -76,24 +50,6 @@ const getDraftMessage = ({ label, offerPrice, hasSalvageTitle }) => {
   return templates[label];
 };
 
-const openMessageModal = ({ label, offerPrice, hasSalvageTitle }) => {
-  messageOfferLabel.textContent = `${label} message draft`;
-  messageText.value = getDraftMessage({ label, offerPrice, hasSalvageTitle });
-  messageModal.showModal();
-};
-
-copyMessageButton.addEventListener("click", async () => {
-  await navigator.clipboard.writeText(messageText.value);
-  copyMessageButton.textContent = "Copied";
-  window.setTimeout(() => {
-    copyMessageButton.textContent = "Copy message";
-  }, 1500);
-});
-
-closeModalButton.addEventListener("click", () => {
-  messageModal.close();
-});
-
 const formatCurrency = (amount) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -101,116 +57,206 @@ const formatCurrency = (amount) =>
     maximumFractionDigits: 0,
   }).format(amount);
 
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
+const init = () => {
+  const form = document.querySelector("#offer-form");
+  const valueInput = document.querySelector("#car-value");
+  const salvageTitleInput = document.querySelector("#salvage-title");
+  const checkerForm = document.querySelector("#checker-form");
+  const checkerCarValueInput = document.querySelector("#checker-car-value");
+  const checkerOfferValueInput = document.querySelector("#checker-offer-value");
+  const checkerSalvageTitleInput = document.querySelector("#checker-salvage-title");
+  const results = document.querySelector("#results");
+  const resultsValue = document.querySelector("#results-value");
+  const salvageValueBlock = document.querySelector("#salvage-value-block");
+  const salvageResultsValue = document.querySelector("#salvage-results-value");
+  const offerList = document.querySelector("#offer-list");
+  const insight = document.querySelector("#insight");
+  const checkerResults = document.querySelector("#checker-results");
+  const checkerEffectiveValue = document.querySelector("#checker-effective-value");
+  const checkerOfferDisplay = document.querySelector("#checker-offer-display");
+  const checkerSummaryLabel = document.querySelector("#checker-summary-label");
+  const checkerTier = document.querySelector("#checker-tier");
+  const checkerVerdict = document.querySelector("#checker-verdict");
+  const checkerContext = document.querySelector("#checker-context");
+  const messageModal = document.querySelector("#message-modal");
+  const messageOfferLabel = document.querySelector("#message-offer-label");
+  const messageText = document.querySelector("#message-text");
+  const copyMessageButton = document.querySelector("#copy-message");
+  const closeModalButton = document.querySelector("#close-modal");
 
-  const carValue = Number(valueInput.value);
-  const hasSalvageTitle = salvageTitleInput.checked;
-
-  if (!Number.isFinite(carValue) || carValue <= 0) {
-    valueInput.focus();
+  if (
+    !form ||
+    !valueInput ||
+    !salvageTitleInput ||
+    !checkerForm ||
+    !checkerCarValueInput ||
+    !checkerOfferValueInput ||
+    !checkerSalvageTitleInput ||
+    !results ||
+    !resultsValue ||
+    !salvageValueBlock ||
+    !salvageResultsValue ||
+    !offerList ||
+    !insight ||
+    !checkerResults ||
+    !checkerEffectiveValue ||
+    !checkerOfferDisplay ||
+    !checkerSummaryLabel ||
+    !checkerTier ||
+    !checkerVerdict ||
+    !checkerContext ||
+    !messageModal ||
+    !messageOfferLabel ||
+    !messageText ||
+    !copyMessageButton ||
+    !closeModalButton
+  ) {
     return;
   }
 
-  resultsValue.textContent = formatCurrency(carValue);
-  salvageResultsValue.textContent = formatCurrency(getEffectiveValue(carValue, true));
-  salvageValueBlock.hidden = !hasSalvageTitle;
-  offerList.innerHTML = "";
+  const openMessageModal = ({ label, offerPrice, hasSalvageTitle }) => {
+    messageOfferLabel.textContent = `${label} message draft`;
+    messageText.value = getDraftMessage({ label, offerPrice, hasSalvageTitle });
 
-  OFFERS.forEach((offer) => {
-    const offerPrice = carValue * (1 - offer.discount / 100);
-    const salvagePrice = offerPrice * (1 - SALVAGE_DISCOUNT);
-    const card = document.createElement("article");
-    card.className = "offer-card";
-    card.innerHTML = `
-      <div class="offer-main">
-        <p class="offer-name">${offer.label}</p>
-        <p class="offer-cut">${offer.discount}% off market value</p>
-      </div>
-      <div class="offer-side">
-        <div class="offer-price">
-          ${
-            hasSalvageTitle
-              ? `
-                <span class="offer-price-original">${formatCurrency(offerPrice)}</span>
-                <span class="offer-price-adjusted">${formatCurrency(salvagePrice)}</span>
-                <span class="offer-disclaimer">Salvage/rebuilt title adjustment: 40% off</span>
-              `
-              : formatCurrency(offerPrice)
-          }
-        </div>
-        <div class="offer-actions">
-          <button
-            class="offer-message-button"
-            type="button"
-            data-offer-label="${offer.label}"
-            data-offer-price="${hasSalvageTitle ? salvagePrice : offerPrice}"
-          >
-            Draft message
-          </button>
-        </div>
-      </div>
-    `;
-    offerList.appendChild(card);
+    if (typeof messageModal.showModal === "function") {
+      messageModal.showModal();
+      return;
+    }
+
+    window.alert(messageText.value);
+  };
+
+  copyMessageButton.addEventListener("click", async () => {
+    await navigator.clipboard.writeText(messageText.value);
+    copyMessageButton.textContent = "Copied";
+    window.setTimeout(() => {
+      copyMessageButton.textContent = "Copy message";
+    }, 1500);
   });
 
-  offerList.querySelectorAll(".offer-message-button").forEach((button) => {
-    button.addEventListener("click", () => {
-      openMessageModal({
-        label: button.dataset.offerLabel,
-        offerPrice: Number(button.dataset.offerPrice),
-        hasSalvageTitle,
+  closeModalButton.addEventListener("click", () => {
+    if (typeof messageModal.close === "function") {
+      messageModal.close();
+    }
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const carValue = Number(valueInput.value);
+    const hasSalvageTitle = salvageTitleInput.checked;
+
+    if (!Number.isFinite(carValue) || carValue <= 0) {
+      valueInput.focus();
+      return;
+    }
+
+    resultsValue.textContent = formatCurrency(carValue);
+    salvageResultsValue.textContent = formatCurrency(getEffectiveValue(carValue, true));
+    salvageValueBlock.hidden = !hasSalvageTitle;
+    offerList.innerHTML = "";
+
+    OFFERS.forEach((offer) => {
+      const offerPrice = carValue * (1 - offer.discount / 100);
+      const salvagePrice = offerPrice * (1 - SALVAGE_DISCOUNT);
+      const card = document.createElement("article");
+      card.className = "offer-card";
+      card.innerHTML = `
+        <div class="offer-main">
+          <p class="offer-name">${offer.label}</p>
+          <p class="offer-cut">${offer.discount}% off market value</p>
+        </div>
+        <div class="offer-side">
+          <div class="offer-price">
+            ${
+              hasSalvageTitle
+                ? `
+                  <span class="offer-price-original">${formatCurrency(offerPrice)}</span>
+                  <span class="offer-price-adjusted">${formatCurrency(salvagePrice)}</span>
+                  <span class="offer-disclaimer">Salvage/rebuilt title adjustment: 40% off</span>
+                `
+                : formatCurrency(offerPrice)
+            }
+          </div>
+          <div class="offer-actions">
+            <button
+              class="offer-message-button"
+              type="button"
+              data-offer-label="${offer.label}"
+              data-offer-price="${hasSalvageTitle ? salvagePrice : offerPrice}"
+            >
+              Draft message
+            </button>
+          </div>
+        </div>
+      `;
+      offerList.appendChild(card);
+    });
+
+    offerList.querySelectorAll(".offer-message-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        openMessageModal({
+          label: button.dataset.offerLabel,
+          offerPrice: Number(button.dataset.offerPrice),
+          hasSalvageTitle,
+        });
       });
     });
+
+    insight.textContent = hasSalvageTitle
+      ? "These numbers include an additional 40% reduction because salvage and rebuilt titles usually carry a major value hit."
+      : "Start near the top if you want a serious conversation. The further down this list you go, the more likely the seller is to ignore you.";
+    results.hidden = false;
   });
 
-  insight.textContent = hasSalvageTitle
-    ? "These numbers include an additional 40% reduction because salvage and rebuilt titles usually carry a major value hit."
-    : "Start near the top if you want a serious conversation. The further down this list you go, the more likely the seller is to ignore you.";
-  results.hidden = false;
-});
+  checkerForm.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-checkerForm.addEventListener("submit", (event) => {
-  event.preventDefault();
+    const carValue = Number(checkerCarValueInput.value);
+    const offerValue = Number(checkerOfferValueInput.value);
+    const hasSalvageTitle = checkerSalvageTitleInput.checked;
 
-  const carValue = Number(checkerCarValueInput.value);
-  const offerValue = Number(checkerOfferValueInput.value);
-  const hasSalvageTitle = checkerSalvageTitleInput.checked;
+    if (!Number.isFinite(carValue) || carValue <= 0) {
+      checkerCarValueInput.focus();
+      return;
+    }
 
-  if (!Number.isFinite(carValue) || carValue <= 0) {
-    checkerCarValueInput.focus();
-    return;
-  }
+    if (!Number.isFinite(offerValue) || offerValue <= 0) {
+      checkerOfferValueInput.focus();
+      return;
+    }
 
-  if (!Number.isFinite(offerValue) || offerValue <= 0) {
-    checkerOfferValueInput.focus();
-    return;
-  }
+    const effectiveValue = getEffectiveValue(carValue, hasSalvageTitle);
+    const percentageOff = ((effectiveValue - offerValue) / effectiveValue) * 100;
+    const tier = getOfferTier(percentageOff);
+    const isOverValue = offerValue > effectiveValue;
 
-  const effectiveValue = getEffectiveValue(carValue, hasSalvageTitle);
-  const percentageOff = ((effectiveValue - offerValue) / effectiveValue) * 100;
-  const tier = getOfferTier(percentageOff);
-  const isOverValue = offerValue > effectiveValue;
+    checkerEffectiveValue.textContent = formatCurrency(effectiveValue);
+    checkerOfferDisplay.textContent = formatCurrency(offerValue);
+    checkerSummaryLabel.textContent = isOverValue ? "Offer status" : "Offer tier";
+    checkerTier.textContent = isOverValue ? "Above asking logic" : tier.label;
 
-  checkerEffectiveValue.textContent = formatCurrency(effectiveValue);
-  checkerOfferDisplay.textContent = formatCurrency(offerValue);
-  checkerSummaryLabel.textContent = isOverValue ? "Offer status" : "Offer tier";
-  checkerTier.textContent = isOverValue ? "Above asking logic" : tier.label;
+    if (isOverValue) {
+      checkerVerdict.textContent =
+        "You are not lowballing. You are offering above the effective value.";
+      checkerContext.textContent = hasSalvageTitle
+        ? "That comparison already includes the salvage/rebuilt title reduction."
+        : "Based on the clean-title value, this is stronger than the calculator's top tier.";
+    } else {
+      checkerVerdict.textContent = tier.lowball
+        ? "Yes, that counts as a lowball."
+        : "No, that is still within a reasonable range.";
+      checkerContext.textContent = `Your offer is ${Math.max(0, percentageOff).toFixed(1)}% below the ${
+        hasSalvageTitle ? "salvage/rebuilt" : "clean-title"
+      } value.`;
+    }
 
-  if (isOverValue) {
-    checkerVerdict.textContent =
-      "You are not lowballing. You are offering above the effective value.";
-    checkerContext.textContent = hasSalvageTitle
-      ? "That comparison already includes the salvage/rebuilt title reduction."
-      : "Based on the clean-title value, this is stronger than the calculator's top tier.";
-  } else {
-    checkerVerdict.textContent = tier.lowball
-      ? "Yes, that counts as a lowball."
-      : "No, that is still within a reasonable range.";
-    checkerContext.textContent = `Your offer is ${Math.max(0, percentageOff).toFixed(1)}% below the ${
-      hasSalvageTitle ? "salvage/rebuilt" : "clean-title"
-    } value.`;
-  }
+    checkerResults.hidden = false;
+  });
+};
 
-  checkerResults.hidden = false;
-});
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init, { once: true });
+} else {
+  init();
+}
